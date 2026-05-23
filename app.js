@@ -468,7 +468,9 @@
 
     // ────────── UPDATE BADGE ──────────
     function updateBadge() {
-        dom.topicCountBadge.textContent = topics.length;
+        if (dom.topicCountBadge) {
+            dom.topicCountBadge.textContent = topics.length;
+        }
     }
 
     // ────────── FORM HANDLING ──────────
