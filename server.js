@@ -95,7 +95,7 @@ app.post('/api/chat', async (req, res) => {
       if (GoogleGenAI && process.env.GEMINI_API_KEY) {
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
         const modelName = mode === 'Pro' ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
-        const context = `You are Aetheric. Topics: \n${JSON.stringify(topics || [], null, 2)}\nUser Query: ${query}`;
+        const context = `You are Memorable. Topics: \n${JSON.stringify(topics || [], null, 2)}\nUser Query: ${query}`;
         const response = await ai.models.generateContent({ model: modelName, contents: context });
         replyText = response.text || replyText;
       } else {

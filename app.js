@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   AETHERIC — Spaced Repetition Tracker
+   MEMORABLE — Spaced Repetition Tracker
    Application Logic
    ═══════════════════════════════════════════════════ */
 
@@ -7,7 +7,7 @@
     'use strict';
 
     // ────────── CONSTANTS ──────────
-    const STORAGE_KEY = 'aetheric-topics';
+    const STORAGE_KEY = 'memorable-topics';
     const INTERVALS = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
     const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -83,7 +83,7 @@
     }
 
     function loadVizModel() {
-        currentVizModel = localStorage.getItem('aetheric-viz-model') || 'Flash';
+        currentVizModel = localStorage.getItem('memorable-viz-model') || 'Flash';
         if (dom.vizModelLabel) {
             dom.vizModelLabel.textContent = currentVizModel;
         }
@@ -667,7 +667,7 @@
                 item.addEventListener('click', (e) => {
                     currentVizModel = e.target.dataset.value;
                     dom.vizModelLabel.textContent = currentVizModel;
-                    localStorage.setItem('aetheric-viz-model', currentVizModel);
+                    localStorage.setItem('memorable-viz-model', currentVizModel);
                     dom.vizDropdownMenu.classList.remove('viz-dropdown__menu--open');
                 });
             });
@@ -878,7 +878,7 @@
             console.error('Error sending message:', error);
             const typingIndicator = dom.vizResponse.querySelector('.viz-typing');
             if (typingIndicator) typingIndicator.remove();
-            appendMessageToUI('Failed to send message to Aetheric server.', 'ai');
+            appendMessageToUI('Failed to send message to Memorable server.', 'ai');
         });
     }
 

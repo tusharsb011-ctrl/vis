@@ -47,7 +47,7 @@ export default async function handler(req, res) {
         const modelName = mode === 'Pro' ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
 
         // Prepare context
-        const context = `You are Aetheric, a helpful AI assistant built into a spaced repetition tracker. 
+        const context = `You are Memorable, a helpful AI assistant built into a spaced repetition tracker. 
 Here is the user's current spaced repetition data:
 ${JSON.stringify(topics, null, 2)}
 

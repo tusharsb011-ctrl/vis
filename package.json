@@ -1,7 +1,7 @@
 {
-  "name": "aetheric-spaced-repetition",
+  "name": "memorable-spaced-repetition",
   "version": "1.0.0",
-  "description": "Aetheric Spaced Repetition Tracker",
+  "description": "Memorable Spaced Repetition Tracker",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
