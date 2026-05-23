@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aetheric — Spaced Repetition Tracker</title>
+    <meta name="description" content="A futuristic spaced repetition tracker with Fibonacci-based review intervals. Track your learning, never forget." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Playfair+Display:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ═══════════════ AMBIENT BACKGROUND ═══════════════ -->
+    <div class="bg-atmosphere" aria-hidden="true">
+        <div class="orb orb--cyan"></div>
+        <div class="orb orb--magenta"></div>
+        <div class="orb orb--amber"></div>
+        <div class="orb orb--cyan-sm"></div>
+    </div>
+
+    <!-- ═══════════════ TOP NAV — DESKTOP ═══════════════ -->
+    <nav class="topnav" id="topnav">
+        <div class="topnav__brand">Aetheric</div>
+        <div class="topnav__tabs">
+            <button class="topnav__tab topnav__tab--active" data-tab="add" id="nav-add">
+                <span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
+                Add Topic
+            </button>
+            <button class="topnav__tab" data-tab="upcoming" id="nav-upcoming">
+                <span class="material-symbols-outlined" style="font-size:18px">event_repeat</span>
+                Upcoming Reviews
+            </button>
+            <button class="topnav__tab" data-tab="visualizer" id="nav-visualizer">
+                <span class="material-symbols-outlined" style="font-size:18px">auto_awesome</span>
+                Visualizer
+            </button>
+        </div>
+        <div class="topnav__end">
+            <span class="topnav__count" id="topic-count-badge" title="Total topics">0</span>
+        </div>
+    </nav>
+
+    <!-- ═══════════════ MAIN ═══════════════ -->
+    <main class="main" id="main">
+
+        <!-- ——— TAB 1: ADD TOPIC ——— -->
+        <section class="tab-panel tab-panel--active" id="panel-add">
+            <div class="glass-card glass-card--form">
+                <!-- Header -->
+                <div class="form-header">
+                    <div class="form-header__icon-ring">
+                        <span class="material-symbols-outlined" style="font-size:32px;color:var(--primary-container)">neurology</span>
+                    </div>
+                    <h1 class="form-header__title">Add New Topic</h1>
+                    <p class="form-header__subtitle">Initialize a new subject for spaced repetition.</p>
+                </div>
+
+                <!-- Form -->
+                <form id="topic-form" class="topic-form" autocomplete="off">
+                    <!-- Topic Name -->
+                    <div class="input-group" id="input-group-name">
+                        <input class="input-group__field" id="topic-name" type="text" placeholder=" " required />
+                        <label class="input-group__label" for="topic-name">Topic Name</label>
+                        <span class="input-group__focus-ring"></span>
+                    </div>
+
+                    <!-- Start Date -->
+                    <div class="input-group" id="input-group-date">
+                        <input class="input-group__field" id="start-date" type="date" required />
+                        <label class="input-group__label input-group__label--raised" for="start-date">Start Date</label>
+                        <span class="input-group__focus-ring"></span>
+                    </div>
+
+                    <!-- Submit -->
+                    <button class="btn-primary" id="btn-submit" type="submit">
+                        <span class="material-symbols-outlined" style="font-size:20px">add_circle</span>
+                        Add Topic
+                    </button>
+                </form>
+
+                <!-- Recent additions (mini-list) -->
+                <div class="recent-topics" id="recent-topics"></div>
+            </div>
+        </section>
+
+        <!-- ——— TAB 2: UPCOMING REVIEWS ——— -->
+        <section class="tab-panel" id="panel-upcoming">
+            <!-- Header card -->
+            <div class="glass-card glass-card--header">
+                <div class="upcoming-header">
+                    <div>
+                        <h1 class="upcoming-header__title">Upcoming Reviews</h1>
+                        <p class="upcoming-header__subtitle" id="review-summary">No reviews scheduled</p>
+                    </div>
+                    <div class="upcoming-header__stat" id="today-count-ring">
+                        <span class="stat-number" id="today-count">0</span>
+                        <span class="stat-label">Today</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review list -->
+            <div class="review-list" id="review-list">
+                <!-- Empty state -->
+                <div class="empty-state" id="empty-state">
+                    <span class="material-symbols-outlined empty-state__icon">auto_stories</span>
+                    <p class="empty-state__title">No upcoming reviews</p>
+                    <p class="empty-state__text">Add a topic to begin your spaced repetition journey.</p>
+                    <button class="btn-ghost" id="btn-go-add">
+                        <span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
+                        Add Your First Topic
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ——— TAB 3: VISUALIZER ——— -->
+        <section class="tab-panel" id="panel-visualizer">
+            <button class="btn-ghost" id="btn-new-chat" style="position: absolute; top: 20px; right: 20px; z-index: 100;">
+                <span class="material-symbols-outlined" style="font-size: 18px">add_comment</span> New Chat
+            </button>
+            <div class="viz-layout">
+                <div class="viz-sidebar" id="viz-sidebar">
+                    <h3 class="viz-sidebar__title">Chat History</h3>
+                    <div class="viz-sidebar__list" id="viz-sidebar-list">
+                        <!-- Chat items injected here -->
+                    </div>
+                </div>
+                <div class="viz-canvas initial-state">
+                <!-- Ambient Radial Glow -->
+                <div class="viz-hero">
+                    <h1 class="viz-greeting" id="viz-greeting-display">Discover connections in your learning.</h1>
+                </div>
+
+                <div class="viz-response-area" id="viz-response"></div>
+
+                <div class="viz-search-wrapper">
+                    <div class="viz-search-container">
+                        <div class="viz-search-glow"></div>
+                        <!-- Glass Input Container -->
+                        <div class="viz-search-bar">
+                            <button class="viz-search-bar__leading" aria-label="Add context">
+                                <span class="material-symbols-outlined" style="font-size:26px">add</span>
+                            </button>
+                            <input
+                                class="viz-search-bar__input"
+                                id="viz-input"
+                                type="text"
+                                placeholder="Ask anything about your topics…"
+                                autocomplete="off"
+                            />
+                            <div class="viz-dropdown" id="viz-dropdown">
+                                <div class="viz-search-bar__pill" id="viz-model-pill">
+                                    <span id="viz-model-label" style="font-size:13px">Flash</span>
+                                    <span class="material-symbols-outlined" style="font-size:16px">keyboard_arrow_down</span>
+                                </div>
+                                <div class="viz-dropdown__menu" id="viz-dropdown-menu">
+                                    <button class="viz-dropdown__item" data-value="Flash">Flash</button>
+                                    <button class="viz-dropdown__item" data-value="Pro">Pro</button>
+                                </div>
+                            </div>
+                            <div class="viz-search-bar__actions">
+                                <button class="viz-search-bar__trailing" id="viz-mic-btn" aria-label="Voice input">
+                                    <span class="material-symbols-outlined" style="font-size:22px">mic</span>
+                                </button>
+                                <button class="viz-search-bar__submit" id="viz-submit-btn" aria-label="Send query">
+                                    <span class="material-symbols-outlined" style="font-size:20px">arrow_upward</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ═══════════════ BOTTOM NAV — MOBILE ═══════════════ -->
+    <nav class="bottomnav" id="bottomnav">
+        <button class="bottomnav__item bottomnav__item--active" data-tab="add">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">layers</span>
+            <span class="bottomnav__label">Topics</span>
+        </button>
+        <button class="bottomnav__item" data-tab="upcoming">
+            <span class="material-symbols-outlined">event_repeat</span>
+            <span class="bottomnav__label">Reviews</span>
+        </button>
+        <button class="bottomnav__item" data-tab="visualizer">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span class="bottomnav__label">Visualizer</span>
+        </button>
+    </nav>
+
+    <!-- ═══════════════ TOAST ═══════════════ -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ═══════════════ SHIMMER STRIPE ═══════════════ -->
+    <div class="shimmer-stripe" aria-hidden="true"></div>
+
+    <!-- ═══════════════ DELETE CONFIRM MODAL ═══════════════ -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="glass-card glass-card--modal">
+            <span class="material-symbols-outlined" style="font-size:40px;color:var(--error)">delete_forever</span>
+            <h2 class="modal__title">Delete Topic?</h2>
+            <p class="modal__text" id="modal-topic-name">This will remove the topic and all its reviews.</p>
+            <div class="modal__actions">
+                <button class="btn-ghost" id="modal-cancel">Cancel</button>
+                <button class="btn-danger" id="modal-confirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="app.js"></script>
+</body>
+</html>
