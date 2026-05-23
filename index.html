@@ -37,10 +37,6 @@
                 <span class="material-symbols-outlined" style="font-size:18px">event_repeat</span>
                 Upcoming Reviews
             </button>
-            <button class="topnav__tab" data-tab="visualizer" id="nav-visualizer">
-                <span class="material-symbols-outlined" style="font-size:18px">auto_awesome</span>
-                Visualizer
-            </button>
         </div>
     </nav>
 
@@ -118,64 +114,7 @@
             </div>
         </section>
 
-        <!-- ——— TAB 3: VISUALIZER ——— -->
-        <section class="tab-panel" id="panel-visualizer">
-            <button class="btn-ghost" id="btn-new-chat" style="position: absolute; top: 20px; right: 20px; z-index: 100;">
-                <span class="material-symbols-outlined" style="font-size: 18px">add_comment</span> New Chat
-            </button>
-            <div class="viz-layout">
-                <div class="viz-sidebar" id="viz-sidebar">
-                    <h3 class="viz-sidebar__title">Chat History</h3>
-                    <div class="viz-sidebar__list" id="viz-sidebar-list">
-                        <!-- Chat items injected here -->
-                    </div>
-                </div>
-                <div class="viz-canvas initial-state">
-                <!-- Ambient Radial Glow -->
-                <div class="viz-hero">
-                    <h1 class="viz-greeting" id="viz-greeting-display">Discover connections in your learning.</h1>
-                </div>
 
-                <div class="viz-response-area" id="viz-response"></div>
-
-                <div class="viz-search-wrapper">
-                    <div class="viz-search-container">
-                        <div class="viz-search-glow"></div>
-                        <!-- Glass Input Container -->
-                        <div class="viz-search-bar">
-                            <button class="viz-search-bar__leading" aria-label="Add context">
-                                <span class="material-symbols-outlined" style="font-size:26px">add</span>
-                            </button>
-                            <input
-                                class="viz-search-bar__input"
-                                id="viz-input"
-                                type="text"
-                                placeholder="Ask anything about your topics…"
-                                autocomplete="off"
-                            />
-                            <div class="viz-dropdown" id="viz-dropdown">
-                                <div class="viz-search-bar__pill" id="viz-model-pill">
-                                    <span id="viz-model-label" style="font-size:13px">Flash</span>
-                                    <span class="material-symbols-outlined" style="font-size:16px">keyboard_arrow_down</span>
-                                </div>
-                                <div class="viz-dropdown__menu" id="viz-dropdown-menu">
-                                    <button class="viz-dropdown__item" data-value="Flash">Flash</button>
-                                    <button class="viz-dropdown__item" data-value="Pro">Pro</button>
-                                </div>
-                            </div>
-                            <div class="viz-search-bar__actions">
-                                <button class="viz-search-bar__trailing" id="viz-mic-btn" aria-label="Voice input">
-                                    <span class="material-symbols-outlined" style="font-size:22px">mic</span>
-                                </button>
-                                <button class="viz-search-bar__submit" id="viz-submit-btn" aria-label="Send query">
-                                    <span class="material-symbols-outlined" style="font-size:20px">arrow_upward</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- ═══════════════ BOTTOM NAV — MOBILE ═══════════════ -->
@@ -187,10 +126,6 @@
         <button class="bottomnav__item" data-tab="upcoming">
             <span class="material-symbols-outlined">event_repeat</span>
             <span class="bottomnav__label">Reviews</span>
-        </button>
-        <button class="bottomnav__item" data-tab="visualizer">
-            <span class="material-symbols-outlined">auto_awesome</span>
-            <span class="bottomnav__label">Visualizer</span>
         </button>
     </nav>
 

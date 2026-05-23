@@ -200,7 +200,7 @@ body {
     z-index: 50;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 0 40px;
     height: 64px;
     background: rgba(16, 20, 21, 0.75);
@@ -210,6 +210,8 @@ body {
 }
 
 .topnav__brand {
+    position: absolute;
+    left: 40px;
     font-family: var(--font-display);
     font-size: 24px;
     font-weight: 700;

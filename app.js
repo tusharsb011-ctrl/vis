@@ -902,32 +902,15 @@
         return reps;
     }
 
-    // ────────── INIT ──────────
     async function init() {
-        // If the page is opened via the file:// protocol the relative API
-        // calls (e.g. /api/chat) will fail. Show a clear message and stop.
-        if (window.location && window.location.protocol === 'file:') {
-            appendMessageToUI('Please run the app through a local server (e.g. `npm start`) and open http://localhost:3000 — opening the file directly (file://) prevents API calls.', 'ai');
-            return;
-        }
         // Set default date
         dom.dateInput.value = getTodayISO();
 
         await loadTopics();
-        loadVizModel();
-        
-        await loadChats();
 
         renderRecentTopics();
         renderUpcoming();
         updateBadge();
-
-        const btnNewChat = $('#btn-new-chat');
-        if (btnNewChat) {
-            btnNewChat.addEventListener('click', () => {
-                createNewChat();
-            });
-        }
 
         // Bind events
         bindEvents();
