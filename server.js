@@ -12,6 +12,59 @@ let inMemoryChats = {};
 let inMemoryMessages = {};
 let inMemoryTopics = [];
 
+function hashString(value) {
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i++) {
+    hash ^= value.charCodeAt(i);
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function normalizeTopicName(name) {
+  return String(name || '').trim();
+}
+
+function normalizeTopicId(name) {
+  const normalizedName = normalizeTopicName(name).toLowerCase();
+  if (!normalizedName) return null;
+  const base = normalizedName.normalize ? normalizedName.normalize('NFKD') : normalizedName;
+  const slug = base
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || `topic-${hashString(normalizedName)}`;
+}
+
+function normalizeTopics(input) {
+  const list = Array.isArray(input) ? input : [];
+  const byId = new Map();
+
+  list.forEach((topic) => {
+    if (!topic || !topic.name) return;
+    const name = normalizeTopicName(topic.name);
+    if (!name) return;
+    const id = normalizeTopicId(name);
+    if (!id) return;
+    const createdAt = topic.createdAt || new Date().toISOString();
+    const normalizedTopic = { ...topic, id, name, createdAt };
+
+    const existing = byId.get(id);
+    if (!existing) {
+      byId.set(id, normalizedTopic);
+      return;
+    }
+
+    const existingTime = Date.parse(existing.createdAt) || 0;
+    const newTime = Date.parse(normalizedTopic.createdAt) || 0;
+    if (newTime >= existingTime) {
+      byId.set(id, normalizedTopic);
+    }
+  });
+
+  return Array.from(byId.values());
+}
+
 async function getMongoTopics() {
   const collection = await getTopicsCollection();
   if (!collection) return null;
@@ -155,13 +208,14 @@ app.get('/api/topics', async (req, res) => {
  try {
    const mongoTopics = await getMongoTopics();
    if (mongoTopics !== null) {
-     return res.json(mongoTopics);
+    return res.json(normalizeTopics(mongoTopics));
    }
    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
      const { kv } = require('@vercel/kv');
      const topics = await kv.get('user_topics');
-     return res.json(topics || []);
+     return res.json(normalizeTopics(topics || []));
    }
+   inMemoryTopics = normalizeTopics(inMemoryTopics);
    return res.json(inMemoryTopics);
  } catch (err) {
    console.error('GET /api/topics error', err);
@@ -170,22 +224,22 @@ app.get('/api/topics', async (req, res) => {
 });
 
 app.post('/api/topics', async (req, res) => {
-  try {
-    const topics = req.body;
-    const storedInMongo = await setMongoTopics(topics);
-    if (storedInMongo) {
-      return res.json({ success: true });
-    }
-    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-      const { kv } = require('@vercel/kv');
-      await kv.set('user_topics', topics);
-      return res.json({ success: true });
-    }
-    inMemoryTopics = topics || [];
-    return res.json({ success: true });
-  } catch (err) {
-    console.error('POST /api/topics error', err);
-    return res.status(500).json({ error: 'Failed to save topics' });
+ try {
+   const topics = normalizeTopics(req.body);
+   const storedInMongo = await setMongoTopics(topics);
+   if (storedInMongo) {
+     return res.json({ success: true });
+   }
+   if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+     const { kv } = require('@vercel/kv');
+     await kv.set('user_topics', topics);
+     return res.json({ success: true });
+   }
+   inMemoryTopics = topics || [];
+   return res.json({ success: true });
+ } catch (err) {
+   console.error('POST /api/topics error', err);
+   return res.status(500).json({ error: 'Failed to save topics' });
   }
 });
 

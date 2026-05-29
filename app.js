@@ -56,12 +56,79 @@
     let chatHistory = [];
     let currentChatId = null;
 
+    function hashString(value) {
+        let hash = 2166136261;
+        for (let i = 0; i < value.length; i++) {
+            hash ^= value.charCodeAt(i);
+            hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+        }
+        return (hash >>> 0).toString(36);
+    }
+
+    function normalizeTopicName(name) {
+        return String(name || '').trim();
+    }
+
+    function normalizeTopicId(name) {
+        const normalizedName = normalizeTopicName(name).toLowerCase();
+        if (!normalizedName) return null;
+        const base = normalizedName.normalize ? normalizedName.normalize('NFKD') : normalizedName;
+        const slug = base
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        return slug || `topic-${hashString(normalizedName)}`;
+    }
+
+    function normalizeTopics(input) {
+        const list = Array.isArray(input) ? input : [];
+        const byId = new Map();
+        let changed = false;
+
+        list.forEach((topic) => {
+            if (!topic || !topic.name) return;
+            const name = normalizeTopicName(topic.name);
+            if (!name) return;
+            const id = normalizeTopicId(name);
+            if (!id) return;
+            const createdAt = topic.createdAt || new Date().toISOString();
+            const normalizedTopic = { ...topic, id, name, createdAt };
+            if (topic.id !== id || topic.name !== name || !topic.createdAt) {
+                changed = true;
+            }
+
+            const existing = byId.get(id);
+            if (!existing) {
+                byId.set(id, normalizedTopic);
+                return;
+            }
+
+            const existingTime = Date.parse(existing.createdAt) || 0;
+            const newTime = Date.parse(normalizedTopic.createdAt) || 0;
+            if (newTime >= existingTime) {
+                byId.set(id, normalizedTopic);
+            }
+            changed = true;
+        });
+
+        const normalized = Array.from(byId.values());
+        if (normalized.length !== list.length) {
+            changed = true;
+        }
+        return { topics: normalized, changed };
+    }
+
     // ────────── DATA LAYER (Vercel KV via API) ──────────
     async function loadTopics() {
         try {
             const res = await fetch('/api/topics');
             if (res.ok) {
-                topics = await res.json() || [];
+                const data = await res.json() || [];
+                const normalized = normalizeTopics(data);
+                topics = normalized.topics;
+                if (normalized.changed) {
+                    await saveTopics();
+                }
             } else {
                 topics = [];
             }
@@ -90,13 +157,22 @@
     }
 
     function addTopic(name, startDate) {
+        const normalizedName = normalizeTopicName(name);
+        const id = normalizeTopicId(normalizedName);
+        const now = new Date().toISOString();
+        const existingIndex = topics.findIndex(t => t.id === id);
+        const existing = existingIndex >= 0 ? topics[existingIndex] : null;
         const topic = {
-            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-            name: name.trim(),
+            id,
+            name: normalizedName,
             startDate: startDate, // ISO string 'YYYY-MM-DD'
-            createdAt: new Date().toISOString(),
+            createdAt: existing?.createdAt || now,
         };
-        topics.push(topic);
+        if (existingIndex >= 0) {
+            topics[existingIndex] = { ...existing, ...topic };
+        } else {
+            topics.push(topic);
+        }
         saveTopics();
         return topic;
     }
@@ -478,7 +554,7 @@
     function handleSubmit(e) {
         e.preventDefault();
 
-        const name = dom.nameInput.value.trim();
+        const name = normalizeTopicName(dom.nameInput.value);
         const date = dom.dateInput.value;
 
         // Validate name
@@ -502,7 +578,8 @@
         }
 
         // Check duplicate
-        const exists = topics.some(t => t.name.toLowerCase() === name.toLowerCase());
+        const topicId = normalizeTopicId(name);
+        const exists = topics.some(t => t.id === topicId);
         if (exists) {
             const group = $('#input-group-name');
             group.classList.add('input-group--error');
