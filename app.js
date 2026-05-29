@@ -401,8 +401,8 @@
                     </div>
                 </div>
                 <div class="review-card__actions">
-                    <button class="btn-icon" data-delete-id="${rep.topicId}" title="Delete topic: ${escapeHtml(rep.topicName)}">
-                        <span class="material-symbols-outlined" style="font-size:18px">delete</span>
+                    <button class="btn-icon" data-delete-id="${rep.topicId}" aria-label="Delete topic: ${escapeHtml(rep.topicName)}" title="Delete topic: ${escapeHtml(rep.topicName)}">
+                        <span class="material-symbols-outlined" aria-hidden="true" style="font-size:18px">delete</span>
                     </button>
                 </div>
             `;
