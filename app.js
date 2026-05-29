@@ -168,13 +168,17 @@
         if (!list) return;
 
         list.innerHTML = '';
+
+        // ⚡ Bolt: Use DocumentFragment to batch DOM insertions for the sidebar list
+        const fragment = document.createDocumentFragment();
         chatHistory.forEach(chat => {
             const el = document.createElement('div');
             el.className = 'viz-sidebar__item' + (chat.id === currentChatId ? ' viz-sidebar__item--active' : '');
             el.textContent = chat.title;
             el.addEventListener('click', () => loadChat(chat.id));
-            list.appendChild(el);
+            fragment.appendChild(el);
         });
+        list.appendChild(fragment);
     }
 
     function appendMessageToUI(text, role) {
@@ -357,6 +361,9 @@
         let lastDateStr = '';
         let cardIndex = 0;
 
+        // ⚡ Bolt: Use DocumentFragment to batch DOM insertions, preventing layout thrashing and improving list render performance
+        const fragment = document.createDocumentFragment();
+
         reps.forEach((rep) => {
             const dateStr = rep.dateStr;
 
@@ -375,7 +382,7 @@
                     <span class="date-separator__text">${label}</span>
                     <span class="date-separator__line"></span>
                 `;
-                dom.reviewList.appendChild(sep);
+                fragment.appendChild(sep);
                 lastDateStr = dateStr;
             }
 
@@ -407,9 +414,11 @@
                 </div>
             `;
 
-            dom.reviewList.appendChild(card);
+            fragment.appendChild(card);
             cardIndex++;
         });
+
+        dom.reviewList.appendChild(fragment);
     }
 
     function createEmptyState() {
