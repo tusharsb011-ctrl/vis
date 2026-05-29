@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessibility improvements for dynamic elements
+**Learning:** Screen readers won't announce dynamically injected toast notifications unless the container has an `aria-live` attribute. Furthermore, icon-only buttons (`.btn-icon`) often use `title` for visual tooltips, but should explicitly use `aria-label` for screen reader accessibility, and the internal icon element (`<span class="material-symbols-outlined">`) should be hidden from screen readers using `aria-hidden="true"`.
+**Action:** When adding toast containers or dynamic notifications, always include `aria-live="polite"` (or `"assertive"`). When building icon-only buttons, add `aria-label` to the button and `aria-hidden="true"` to the icon itself.
