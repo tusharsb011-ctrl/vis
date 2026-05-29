@@ -37,6 +37,10 @@
                 <span class="material-symbols-outlined" style="font-size:18px">event_repeat</span>
                 Upcoming Reviews
             </button>
+            <button class="topnav__tab" data-tab="visualizer" id="nav-visualizer">
+                <span class="material-symbols-outlined" style="font-size:18px">auto_graph</span>
+                Visualizer
+            </button>
         </div>
     </nav>
 
@@ -114,6 +118,60 @@
             </div>
         </section>
 
+        <!-- ——— TAB 3: VISUALIZER ——— -->
+        <section class="tab-panel" id="panel-visualizer">
+            <div class="viz-layout">
+                <div class="viz-canvas initial-state">
+                    <div class="viz-glow" aria-hidden="true"></div>
+
+                    <div class="viz-hero">
+                        <div class="viz-greeting" id="viz-greeting-display">What would you like to explore?</div>
+                    </div>
+
+                    <div class="viz-response-area" id="viz-response"></div>
+
+                    <div class="viz-search-wrapper">
+                        <div class="viz-search-container">
+                            <div class="viz-search-glow" aria-hidden="true"></div>
+
+                            <div class="viz-search-bar">
+                                <button class="viz-search-bar__leading" type="button" aria-label="Start a new query">
+                                    <span class="material-symbols-outlined">sparkles</span>
+                                </button>
+
+                                <input class="viz-search-bar__input" id="viz-input" type="text" placeholder="Ask anything about your topics…" autocomplete="off" />
+
+                                <div class="viz-dropdown" id="viz-dropdown">
+                                    <button class="viz-search-bar__pill" type="button" id="viz-model-pill">
+                                        <span id="viz-model-label">Flash</span>
+                                        <span class="material-symbols-outlined" style="font-size:18px">expand_more</span>
+                                    </button>
+                                    <div class="viz-dropdown__menu" id="viz-dropdown-menu">
+                                        <button class="viz-dropdown__item" type="button" data-value="Flash">Flash</button>
+                                        <button class="viz-dropdown__item" type="button" data-value="Pro">Pro</button>
+                                    </div>
+                                </div>
+
+                                <div class="viz-search-bar__actions">
+                                    <button class="viz-search-bar__trailing" id="viz-mic-btn" type="button" aria-label="Voice input">
+                                        <span class="material-symbols-outlined">mic</span>
+                                    </button>
+                                    <button class="viz-search-bar__submit" id="viz-submit-btn" type="button" aria-label="Submit query">
+                                        <span class="material-symbols-outlined" style="font-size:18px">arrow_upward</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="viz-sidebar">
+                    <div class="viz-sidebar__title">Chat History</div>
+                    <div class="viz-sidebar__list" id="viz-sidebar-list"></div>
+                </aside>
+            </div>
+        </section>
+
 
     </main>
 
@@ -126,6 +184,10 @@
         <button class="bottomnav__item" data-tab="upcoming">
             <span class="material-symbols-outlined">event_repeat</span>
             <span class="bottomnav__label">Reviews</span>
+        </button>
+        <button class="bottomnav__item" data-tab="visualizer">
+            <span class="material-symbols-outlined">auto_graph</span>
+            <span class="bottomnav__label">Visualize</span>
         </button>
     </nav>
 

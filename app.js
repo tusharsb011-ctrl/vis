@@ -316,6 +316,7 @@
         }
         if (tab === 'visualizer') {
             startVizGreeting();
+            loadChats();
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
@@ -906,6 +907,7 @@
         // Set default date
         dom.dateInput.value = getTodayISO();
 
+        loadVizModel();
         await loadTopics();
 
         renderRecentTopics();

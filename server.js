@@ -3,12 +3,32 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { chatsContainer, messagesContainer } = require('./api/cosmosClient');
+const { getTopicsCollection } = require('./api/mongoClient');
 
 const app = express();
 app.use(express.json());
 
 let inMemoryChats = {};
 let inMemoryMessages = {};
+let inMemoryTopics = [];
+
+async function getMongoTopics() {
+  const collection = await getTopicsCollection();
+  if (!collection) return null;
+  const doc = await collection.findOne({ _id: 'user_topics' });
+  return doc?.topics || [];
+}
+
+async function setMongoTopics(topics) {
+  const collection = await getTopicsCollection();
+  if (!collection) return false;
+  await collection.updateOne(
+    { _id: 'user_topics' },
+    { $set: { topics: topics || [], updated_at: new Date().toISOString() } },
+    { upsert: true }
+  );
+  return true;
+}
 
 // Serve static frontend files (index.html, app.js, style.css)
 app.use(express.static(path.join(__dirname)));
@@ -131,25 +151,31 @@ app.post('/api/chat', async (req, res) => {
     return res.status(500).json({ error: 'Failed to process request' });
   }
 });
-let inMemoryTopics = [];
-
 app.get('/api/topics', async (req, res) => {
-  try {
-    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-      const { kv } = require('@vercel/kv');
-      const topics = await kv.get('user_topics');
-      return res.json(topics || []);
-    }
-    return res.json(inMemoryTopics);
-  } catch (err) {
-    console.error('GET /api/topics error', err);
-    return res.status(500).json({ error: 'Failed to fetch topics' });
-  }
+ try {
+   const mongoTopics = await getMongoTopics();
+   if (mongoTopics !== null) {
+     return res.json(mongoTopics);
+   }
+   if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+     const { kv } = require('@vercel/kv');
+     const topics = await kv.get('user_topics');
+     return res.json(topics || []);
+   }
+   return res.json(inMemoryTopics);
+ } catch (err) {
+   console.error('GET /api/topics error', err);
+   return res.status(500).json({ error: 'Failed to fetch topics' });
+ }
 });
 
 app.post('/api/topics', async (req, res) => {
   try {
     const topics = req.body;
+    const storedInMongo = await setMongoTopics(topics);
+    if (storedInMongo) {
+      return res.json({ success: true });
+    }
     if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
       const { kv } = require('@vercel/kv');
       await kv.set('user_topics', topics);
